@@ -31,12 +31,12 @@ print("Torch:", torch.__version__, "| Gymnasium:", gym.__version__)
 @dataclass(frozen=True)
 class DQNConfig:
     gamma: float = 0.99
-    learning_rate: float = 3e-4
-    batch_size: int = 64
-    replay_capacity: int = 10000 #M for replay buffer capacity
+    learning_rate: float = 1e-3
+    batch_size: int = 128
+    replay_capacity: int = 50000 #M for replay buffer capacity
     min_replay_size: int = 1000 #minimum replay buffer size before starting optimization
-    target_sync_interval: int = 100 #C for target network sync
-    train_interval: int = 4     #N for number of environment steps between optimization updates for replay ratio
+    target_sync_interval: int = 250 #C for target network sync
+    train_interval: int = 1     #N for number of environment steps between optimization updates for replay ratio
     hidden_dim: int = 128  #set based on google search
     epsilon_start: float = 1.0
     epsilon_end: float = 0.05

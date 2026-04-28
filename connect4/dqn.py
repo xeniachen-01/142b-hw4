@@ -10,6 +10,7 @@ import torch.nn as nn
 import random
 import torch.nn.functional as F
 import torch.optim as optim
+import time 
 
 from .env import Connect4Config, Connect4Env
 from .opponents import Agent
@@ -293,7 +294,7 @@ def save_dqn_checkpoint(
     }
     torch.save(payload, path)
 
-
+start_time = time.time()
 def train_dqn(
     env_config: Connect4Config,
     training_config: DQNConfig,

@@ -9,6 +9,8 @@ from connect4.env import Connect4Config
 from connect4.evaluate import evaluate_agent_pair
 from connect4.opponents import build_agent
 
+import time
+
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Train a DQN agent on a configurable Connect-style game.")
@@ -54,6 +56,10 @@ def main() -> None:
     device = torch.device("cpu")
     opponent = build_agent(args.opponent, seed=args.seed)
     eval_opponent = build_agent(args.eval_opponent, seed=args.seed + 1)
+
+    # before train_dqn call:
+    t0 = time.time()
+
     result = train_dqn(
         env_config=env_config,
         training_config=training_config,
@@ -61,7 +67,9 @@ def main() -> None:
         eval_opponents={args.eval_opponent: eval_opponent},
         device=device,
     )
-
+    elapsed = time.time() - t0
+    print(f"Training time: {elapsed:.0f}s  ({elapsed/60:.1f} min)")
+    
     checkpoint_path = Path(args.checkpoint_path)
     save_dqn_checkpoint(
         checkpoint_path=checkpoint_path,
@@ -72,6 +80,7 @@ def main() -> None:
             "train_opponent": args.opponent,
             "eval_opponent": args.eval_opponent,
             "device": result["device"],
+            "training_time_seconds": elapsed,
         },
     )
 

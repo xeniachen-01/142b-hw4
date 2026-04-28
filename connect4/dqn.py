@@ -294,7 +294,7 @@ def save_dqn_checkpoint(
     }
     torch.save(payload, path)
 
-start_time = time.time()
+
 def train_dqn(
     env_config: Connect4Config,
     training_config: DQNConfig,
@@ -328,7 +328,10 @@ def train_dqn(
     history: list[dict[str, Any]] = []
     global_step = 0
 
+    training_start_time = time.time()
+
     for episode in range(1, training_config.max_episodes + 1):
+        episode_start_time = time.time()
         start_player = 1 if rng.random() < 0.5 else -1
         env.reset(start_player=start_player)
         episode_reward = 0.0

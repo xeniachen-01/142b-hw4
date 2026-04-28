@@ -31,13 +31,33 @@ print("Torch:", torch.__version__, "| Gymnasium:", gym.__version__)
 
 @dataclass(frozen=True)
 class DQNConfig:
+    # # worse run
+    # gamma: float = 0.99
+    # learning_rate: float = 1e-3
+    # batch_size: int = 128
+    # replay_capacity: int = 50000 #M for replay buffer capacity
+    # min_replay_size: int = 1000 #minimum replay buffer size before starting optimization
+    # target_sync_interval: int = 250 #C for target network sync
+    # train_interval: int = 1     #N for number of environment steps between optimization updates for replay ratio
+    # hidden_dim: int = 128  #set based on google search
+    # epsilon_start: float = 1.0
+    # epsilon_end: float = 0.05
+    # epsilon_decay_steps: int = 10000
+    # max_episodes: int = 500
+    # eval_interval: int = 50
+    # eval_games: int = 40
+    # gradient_clip_norm: float = 5 # reduce to 1 if unstable
+    # seed: int = 42
+
+
+    # win rate 92.5%
     gamma: float = 0.99
-    learning_rate: float = 1e-3
+    learning_rate: float = 3e-4
     batch_size: int = 128
-    replay_capacity: int = 50000 #M for replay buffer capacity
+    replay_capacity: int = 10000 #M for replay buffer capacity
     min_replay_size: int = 1000 #minimum replay buffer size before starting optimization
-    target_sync_interval: int = 250 #C for target network sync
-    train_interval: int = 1     #N for number of environment steps between optimization updates for replay ratio
+    target_sync_interval: int = 100 #C for target network sync
+    train_interval: int = 4     #N for number of environment steps between optimization updates for replay ratio
     hidden_dim: int = 128  #set based on google search
     epsilon_start: float = 1.0
     epsilon_end: float = 0.05
@@ -47,25 +67,6 @@ class DQNConfig:
     eval_games: int = 40
     gradient_clip_norm: float = 5 # reduce to 1 if unstable
     seed: int = 42
-
-
-    # win rate 92.5%
-    # gamma: float = 0.99
-    # learning_rate: float = 3e-4
-    # batch_size: int = 128
-    # replay_capacity: int = 10000 #M for replay buffer capacity
-    # min_replay_size: int = 1000 #minimum replay buffer size before starting optimization
-    # target_sync_interval: int = 100 #C for target network sync
-    # train_interval: int = 4     #N for number of environment steps between optimization updates for replay ratio
-    # hidden_dim: int = 128  #set based on google search
-    # epsilon_start: float = 1.0
-    # epsilon_end: float = 0.05
-    # epsilon_decay_steps: int = 10000
-    # max_episodes: int = 50
-    # eval_interval: int = 50
-    # eval_games: int = 40
-    # gradient_clip_norm: float = 5 # reduce to 1 if unstable
-    # seed: int = 42
 
     def epsilon_at_step(self, step: int) -> float:
         if self.epsilon_decay_steps <= 0:
@@ -328,10 +329,10 @@ def train_dqn(
     history: list[dict[str, Any]] = []
     global_step = 0
 
-    training_start_time = time.time()
+    
 
     for episode in range(1, training_config.max_episodes + 1):
-        episode_start_time = time.time()
+        
         start_player = 1 if rng.random() < 0.5 else -1
         env.reset(start_player=start_player)
         episode_reward = 0.0
@@ -414,6 +415,9 @@ def train_dqn(
                 )
                 for name, eval_opponent in eval_opponents.items()
             }
+
+
+    
 
         history.append(record)
 

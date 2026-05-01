@@ -125,9 +125,10 @@ def _greedy_action(
     with torch.no_grad():
         logits, _ = model(obs_tensor)
         # this use "dist" instead of "masked_logits"
-        dist = _masked_distribution(logits, legal_tensor)
+        #dist = _masked_distribution(logits, legal_tensor)
+        masked_logits = logits.masked_fill(~legal_tensor, -1e9)
         # action = dist.mode()
-        action = dist.argmax(dim=1)
+        action = masked_logits.argmax(dim=1)
     return int(action.item())
 
 

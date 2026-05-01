@@ -17,15 +17,13 @@ from .opponents import Agent
 from .evaluate import evaluate_agent_pair
 import matplotlib.pyplot as plt
 from collections import deque
-from IPython.display import clear_output
-import gymnasium as gym
 
 SEED = 42
 random.seed(SEED)
 np.random.seed(SEED)
 torch.manual_seed(SEED)
 device = torch.device("cpu")
-print("Torch:", torch.__version__, "| Gymnasium:", gym.__version__)
+print("Torch:", torch.__version__)
 
 
 

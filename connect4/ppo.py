@@ -126,8 +126,9 @@ def _greedy_action(
         logits, _ = model(obs_tensor)
         # this use "dist" instead of "masked_logits"
         dist = _masked_distribution(logits, legal_tensor)
-        action = dist.mode()
-    return action.item()
+        # action = dist.mode()
+        action = dist.argmax(dim=1)
+    return int(action.item())
 
 
 def _bootstrap_value(
@@ -156,7 +157,7 @@ def _compute_gae(
     next_advantage = 0.0
     next_value = last_value
     for step in range(len(rewards) - 1, -1, -1):
-        nonterminal = 1,0 - float(dones[step])
+        nonterminal = 1.0 - float(dones[step])
         delta = rewards[step] + config.gamma * next_value * nonterminal - values[step]
         next_advantage = delta + config.gamma * config.gae_lambda * nonterminal * next_advantage
         advantages[step] = next_advantage
@@ -228,7 +229,7 @@ def train_ppo(
     device: torch.device | str | None = None,
 ) -> dict[str, Any]:
     # raise NotImplementedError("TODO: implement the PPO training loop")
-    random.seed(training_config.seed)
+    np.random.seed(training_config.seed)
     np.random.seed(training_config.seed)
     torch.manual_seed(training_config.seed)
 
@@ -249,10 +250,10 @@ def train_ppo(
 
     for update in range(1, training_config.max_updates + 1):
         obs_buffer = np.zeros((training_config.rollout_steps, *env_config.observation_shape), dtype=np.float32)
-        legal_buffer = np.zero((training_config.rollout_steps, env_config.action_size), dtype=bool)
-        action_buffer = np.zero(training_config.rollout_steps, dtype=np.int64)
-        logprob_buffer = np.zero(training_config.rollout_steps, dtype=np.float32)
-        reward_buffer = np.zero(training_config.rollout_steps, dtype=np.float32)
+        legal_buffer = np.zeros((training_config.rollout_steps, env_config.action_size), dtype=bool)
+        action_buffer = np.zeros(training_config.rollout_steps, dtype=np.int64)
+        logprob_buffer = np.zeros(training_config.rollout_steps, dtype=np.float32)
+        reward_buffer = np.zeros(training_config.rollout_steps, dtype=np.float32)
         done_buffer = np.zeros(training_config.rollout_steps, dtype=np.bool_)
         value_buffer = np.zeros(training_config.rollout_steps, dtype=np.float32)
 

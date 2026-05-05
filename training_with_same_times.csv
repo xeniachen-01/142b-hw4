@@ -1,0 +1,3 @@
+Model, Run Time(Seconds), Win Rate
+PPO, 109, 0.9
+DQN, 100, 0.925

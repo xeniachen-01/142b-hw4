@@ -22,19 +22,21 @@ class PPOConfig:
     #gae_lambda: float = 0.8 -> value from third and fourth run
     #gae_lambda: float = 0.2 -> value from fifth run
     gae_lambda: float = 0.95
-    learning_rate: float = 3e-4
+    #learning_rate: float = 3e-4 -> value from all PPO runs
+    learning_rate: float = 1e-3  # increased learning rate to speed up training
     #rollout_steps: int = 512 -> value from first three runs
     rollout_steps: int = 256
     #update_epochs: int = 4
     update_epochs: int = 3
     #minibatch_size: int = 128 -> value from first three runs
     minibatch_size: int = 64
-    clip_coef: float = 0.2
+    #clip_coef: float = 0.2 -> changed after learning rate 
+    clip_coef: float = 0.5
     value_coef: float = 0.5
     entropy_coef: float = 0.01
     max_grad_norm: float = 0.5
-    #hidden_dim: int = 128 -> value from first five runs
-    hidden_dim: int = 32
+    hidden_dim: int = 128 #-> value from first five runs
+    #hidden_dim: int = 32
     #max_updates: int = 400 -> value from first run
     max_updates: int = 200
     eval_interval: int = 20
@@ -239,7 +241,6 @@ def train_ppo(
 ) -> dict[str, Any]:
     # raise NotImplementedError("TODO: implement the PPO training loop")
     np.random.seed(training_config.seed)
-    np.random.seed(training_config.seed)
     torch.manual_seed(training_config.seed)
 
     resolved_device = torch.device(device or ("cuda" if torch.cuda.is_available() else "cpu"))
@@ -374,6 +375,7 @@ def train_ppo(
                 )
                 for name, eval_opponent in eval_opponents.items()
             }
+            model.train() #added to see if model results change
 
         history.append(record)
 
